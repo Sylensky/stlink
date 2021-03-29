@@ -2,10 +2,10 @@
 # * Using Git
 # * Local .version file
 find_package (Git QUIET)
-if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-	# Working off a git repo, using git versioning
-	# Check if HEAD is pointing to a tag
-	execute_process (
+if (0 AND GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+        # Working off a git repo, using git versioning
+        # Check if HEAD is pointing to a tag
+        execute_process (
 		COMMAND             "${GIT_EXECUTABLE}" describe --always
 		WORKING_DIRECTORY   "${PROJECT_SOURCE_DIR}"
 		OUTPUT_VARIABLE     PROJECT_VERSION
