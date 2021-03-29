@@ -133,6 +133,59 @@
 #define L1_WRITE_BLOCK_SIZE 0x80
 #define L0_WRITE_BLOCK_SIZE 0x40
 
+
+
+// STM32F401VD
+#define STM32F401VD_FLASH_REGS_ADDR ((uint32_t)0x40023C00)
+#define STM32F401VD_FLASH_ACR_BASE (STM32F401VD_FLASH_REGS_ADDR + 0x00)
+#define STM32F401VD_FLASH_KEYR_BASE (STM32F401VD_FLASH_REGS_ADDR + 0x04)
+#define STM32F401VD_FLASH_OPTKEYR_BASE (STM32F401VD_FLASH_REGS_ADDR + 0x08)
+#define STM32F401VD_FLASH_SR_BASE (STM32F401VD_FLASH_REGS_ADDR + 0x0C)
+#define STM32F401VD_FLASH_CR_BASE (STM32F401VD_FLASH_REGS_ADDR + 0x10)
+#define STM32F401VD_FLASH_OPTCR_BASE (STM32F401VD_FLASH_REGS_ADDR + 0x14)
+
+
+// STM32F401VD FLASH control register
+#define STM32F401VD_FLASH_CR_PG               0        /* Program */
+#define STM32F401VD_FLASH_CR_SER              1        /* Sector erase */
+#define STM32F401VD_FLASH_CR_MER              2        /* Mass erase */
+#define STM32F401VD_FLASH_CR_SNB              3        /* Sector number (5 bits) */
+#define STM32F401VD_FLASH_CR_PSIZE            8        /* Program size */
+#define STM32F401VD_FLASH_CR_STRT            16        /* Start */
+#define STM32F401VD_FLASH_CR_EOPIE           24        /* End of operation interrupt enable */
+#define STM32F401VD_FLASH_CR_ERRIE           25        /* Error interrupt enable */
+#define STM32F401VD_FLASH_CR_LOCK_BIT        31        /* FLASH_CR Lock */
+
+// STM32F401VD FLASH option register
+#define STM32F401VD_FLASH_OPTCR_SPRMOD       31        /* Protection Mode of nWPRi bits */
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT0    16        /* not write protect bit 0*/
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT1    17
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT2    18
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT3    19
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT4    20
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT5    21
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT6    22
+#define STM32F401VD_FLASH_OPTCR_nWRP_BIT7    23
+#define STM32F401VD_FLASH_OPTCR_RDP           8        /* Read protect */
+#define STM32F401VD_FLASH_OPTCR_USER          5        /* User option bytes */
+#define STM32F401VD_FLASH_OPTCR_BOR_LEVL      2        /* BOR reset level */
+#define STM32F401VD_FLASH_OPTCR_OPTSTRT       1        /* Option start */
+#define STM32F401VD_FLASH_OPTCR_OPTLOCK_BIT   0        /* Option lock */
+#define STM32F401VD_FLASH_SR_BSY_BIT         16        /* Status busy */
+
+
+uint8_t stm32f401vd_sectors[8] =
+{
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT0,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT1,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT2,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT3,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT4,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT5,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT6,
+    STM32F401VD_FLASH_OPTCR_nWRP_BIT7
+};
+
 void write_uint32(unsigned char* buf, uint32_t ui) {
     if (!is_bigendian()) { // le -> le (don't swap)
         buf[0] = ((unsigned char*) &ui)[0];
@@ -692,6 +745,7 @@ int stlink_load_device_params(stlink_t *sl) {
 
 int stlink_reset(stlink_t *sl) {
     DLOG("*** stlink_reset ***\n");
+    ILOG("*** stlink_reset ***\n");
     return sl->backend->reset(sl);
 }
 
@@ -788,7 +842,7 @@ int stlink_read_debug32(stlink_t *sl, uint32_t addr, uint32_t *data) {
 
     ret = sl->backend->read_debug32(sl, addr, data);
     if (!ret)
-	    DLOG("*** stlink_read_debug32 %x is %#x\n", *data, addr);
+	    DLOG("*** stlink_read_debug32 %x in %#x\n", *data, addr);
 
 	return ret;
 }
@@ -1736,6 +1790,7 @@ int stlink_verify_write_flash(stlink_t *sl, stm32_addr_t address, uint8_t *data,
         }
     }
     ILOG("Flash written and verified! jolly good!\n");
+    printf("jolly good!\n");
     return 0;
 
 }
@@ -2257,3 +2312,220 @@ int stlink_fwrite_flash(stlink_t *sl, const char* path, stm32_addr_t addr) {
     unmap_file(&mf);
     return err;
 }
+
+
+int option_bytes_set(stlink_t *sl, stm32_addr_t addr, uint8_t start_sector, uint8_t end_sector)
+{
+  uint32_t val;
+  uint8_t sector_count = 0;
+
+  stlink_read_debug32(sl, addr, &val);
+  DLOG("val = %#x   SPRMOD = %#x\n", val, 1 << STM32F401VD_FLASH_OPTCR_SPRMOD);
+  if((val & (1 << STM32F401VD_FLASH_OPTCR_SPRMOD)))
+  {
+    //writing 1 to option bits to lock
+    for (sector_count = start_sector; sector_count < end_sector + 1; ++sector_count)
+    {
+      val |= (1 << (uint32_t)stm32f401vd_sectors[sector_count]);
+      DLOG("val = %#x// count = %5d\n", val, sector_count);
+    }
+    stlink_write_debug32(sl, addr, val);
+    ILOG("[ 5/1 ] Wrote %x to Flash_OPTCR_nWRP Optionbyte %x at %#x\n", val, sector_count, addr);
+    stlink_read_debug32(sl, addr, &val);
+    ILOG("[ 6/1 ] set Write protection of sector 0 and 1\n");
+  }
+  else
+  {
+    //writing 0 to option bits to lock
+    DLOG("val = %#x   SPRMOD = %#x\n", val, 1 << STM32F401VD_FLASH_OPTCR_SPRMOD);
+    for (sector_count = start_sector; sector_count < end_sector + 1; ++sector_count)
+    {
+      val &= ~(1 << (uint32_t)stm32f401vd_sectors[sector_count]);
+      DLOG("val = %#x// count = %5d\n", val, sector_count);
+
+    }
+    stlink_write_debug32(sl, addr, val);
+    ILOG("[ 5/1 ] Wrote %x to Flash_OPTCR_nWRP Optionbyte %x at %#x\n", val, sector_count, addr);
+    stlink_read_debug32(sl, addr, &val);
+    ILOG("[ 6/2 ] set Write protection of sector 0 and 1\n");
+  }
+  return 0;
+}
+
+int option_bytes_clear(stlink_t *sl, stm32_addr_t addr, uint8_t start_sector, uint8_t end_sector)
+{
+  uint32_t val;
+  uint8_t sector_count = 0;
+
+  stlink_read_debug32(sl, addr, &val);
+  DLOG("val = %#x   SPRMOD = %#x\n", val, 1 << STM32F401VD_FLASH_OPTCR_SPRMOD);
+  if((val & (1 << STM32F401VD_FLASH_OPTCR_SPRMOD)))
+  {
+    //writing 0 to option bits to unlock
+    for (sector_count = start_sector; sector_count < end_sector + 1; ++sector_count)
+    {
+      val &= ~(1 << (uint32_t)stm32f401vd_sectors[sector_count]);
+      DLOG("val = %#x// count = %5d\n", val, sector_count);
+    }
+    stlink_write_debug32(sl, addr, val);
+    ILOG("[ 5/1 ] Wrote %x to Flash_OPTCR_nWRP Optionbyte %x at %#x\n", val, sector_count, addr);
+    stlink_read_debug32(sl, addr, &val);
+    ILOG("[ 6/1 ] removed Write protection of sector 0 and 1\n");
+  }
+  else
+  {
+
+    //writing 1 to option bits to unlock
+    for (sector_count = start_sector; sector_count < end_sector + 1; ++sector_count)
+    {
+      val |= (1 << (uint32_t)stm32f401vd_sectors[sector_count]);
+      DLOG("val = %#x// count = %5d\n", val, sector_count);
+    }
+    stlink_write_debug32(sl, addr, val);
+    ILOG("[ 5/1 ] Wrote %x to Flash_OPTCR_nWRP Optionbyte %x at %#x\n", val, sector_count, addr);
+    stlink_read_debug32(sl, addr, &val);
+    ILOG("[ 6/2 ] removed Write protection of sector 0 and 1\n");
+  }
+  return 0;
+}
+
+/**
+ * Write option bytes
+ * @param sl
+ * @param addr of the memory mapped option bytes
+ * @param base option bytes to write
+ * @return 0 on success, -ve on failure.
+ */
+int stm32f4_write_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector)
+{
+    uint32_t val;
+
+    // Make sure we've loaded the context with the chip details
+    stlink_core_id(sl);
+
+    /* Check if chip is supported and for correct address */
+    if((sl->chip_id != STLINK_CHIPID_STM32_F401) || (addr != STM32_F401VD_OPTION_BYTES_BASE)) {
+        ELOG("Option bytes writing is currently only supported for the STM32F401VD\n");
+        return -1;
+    }
+    ILOG("[ 1 ] Checked the supported Chips\n");
+
+    /* Unlock flash if necessary */
+    stlink_read_debug32(sl, STM32F401VD_FLASH_CR_BASE, &val);
+    DLOG("val = %#x   LOCK = %#x\n", val, 1 << STM32F401VD_FLASH_CR_LOCK_BIT);
+    if ((val & (1 << STM32F401VD_FLASH_CR_LOCK_BIT))) {
+
+        do {
+            stlink_read_debug32(sl, STM32F401VD_FLASH_SR_BASE, &val);
+        } while ((val & (1 << STM32F401VD_FLASH_SR_BSY_BIT)) != 0);
+
+        ILOG("[ 2 ] Disabling Flash write protection\n");
+
+        val = 0x45670123;
+        stlink_write_debug32(sl, STM32F401VD_FLASH_KEYR_BASE, val);
+        ILOG("[ 2/1 ] Wrote %x to Flash_KEYR = %#x\n", val, STM32F401VD_FLASH_KEYR_BASE);
+
+        val = 0xCDEF89AB;
+        stlink_write_debug32(sl, STM32F401VD_FLASH_KEYR_BASE, val);
+        ILOG("[ 2/1 ] Wrote %x to Flash_KEYR = %#x\n", val, STM32F401VD_FLASH_KEYR_BASE);
+
+        //Wait for 'busy' bit in FLASH_SR to clear.
+        do {
+            stlink_read_debug32(sl, STM32F401VD_FLASH_SR_BASE, &val);
+        } while((val & (1 << STM32F401VD_FLASH_SR_BSY_BIT)) != 0);
+
+        // check that the lock is no longer set.
+        stlink_read_debug32(sl, STM32F401VD_FLASH_CR_BASE, &val);
+        if ((val & (1 << STM32F401VD_FLASH_CR_LOCK_BIT))) {
+            ELOG("Flash Lock is still set\n");
+            return -1;
+        }
+        ILOG("[ 3 ] Flash write protection disabled\n");
+    }
+
+    /* Unlock option bytes if necessary */
+    stlink_read_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, &val);
+    DLOG("val = %#x   LOCK = %#x\n", val, 1 << STM32F401VD_FLASH_OPTCR_OPTLOCK_BIT);
+    if ((val & (1 << STM32F401VD_FLASH_OPTCR_OPTLOCK_BIT))) {
+        /* disable option byte write protection. */
+
+        //Wait for 'busy' bit in FLASH_SR to clear.
+        do {
+              stlink_read_debug32(sl, STM32F401VD_FLASH_SR_BASE, &val);
+        } while ((val & (1 << STM32F401VD_FLASH_SR_BSY_BIT)) != 0);
+
+        val = 0x08192A3B;
+        stlink_write_debug32(sl, STM32F401VD_FLASH_OPTKEYR_BASE, val);
+        ILOG("[ 3/1 ] Wrote %x to Flash_OPTKEYR = %#x\n", val, STM32F401VD_FLASH_OPTKEYR_BASE);
+
+        val = 0x4C5D6E7F;
+        stlink_write_debug32(sl, STM32F401VD_FLASH_OPTKEYR_BASE, val);
+        ILOG("[ 3/1 ] Wrote %x to Flash_OPTKEYR = %#x\n", val, STM32F401VD_FLASH_OPTKEYR_BASE);
+
+
+        stlink_read_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, &val);
+        if ((val & (1 << STM32F401VD_FLASH_OPTCR_OPTLOCK_BIT))) {
+           ELOG("Optionbyte Lock is still set\n");
+            return -1;
+        }
+        ILOG("[ 4 ] unlocked option bytes control register\n");
+    }
+
+    /* get SPRMOD bit */
+    stlink_read_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, &val);
+    if(nreset == 0)
+    {
+      /* Clearing option bytes */
+      option_bytes_clear(sl, STM32F401VD_FLASH_OPTCR_BASE, start_sector, end_sector);
+    } else if(nreset == 1)
+    {
+      /* Setting option bytes */
+      option_bytes_set(sl, STM32F401VD_FLASH_OPTCR_BASE, start_sector, end_sector);
+    }
+
+    stlink_read_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, &val);
+
+
+    /* Set Options Start bit */
+     stlink_read_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, &val);
+     val |= (1 << STM32F401VD_FLASH_OPTCR_OPTSTRT);
+     stlink_write_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, val);
+     ILOG("[ 7 ] Set options start bit\n");
+
+       //Wait for 'busy' bit in FLASH_SR to clear.
+     do {
+         stlink_read_debug32(sl, STM32F401VD_FLASH_SR_BASE, &val);
+     } while ((val & (1 << STM32F401VD_FLASH_SR_BSY_BIT)) != 0);
+      //apply options bytes immediate
+     stlink_read_debug32(sl, STM32F401VD_FLASH_SR_BASE, &val);
+     val = STM32F401VD_FLASH_CR_BASE;
+     val |= (1 << STM32F401VD_FLASH_CR_STRT);
+     stlink_write_debug32(sl, STM32F401VD_FLASH_CR_BASE, val);
+     ILOG("[ 8 ] Applied option bytes\n");
+
+     /* Re-lock option bytes */
+
+     stlink_read_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, &val);
+     val |= (1 << STM32F401VD_FLASH_OPTCR_OPTLOCK_BIT);
+     stlink_write_debug32(sl, STM32F401VD_FLASH_OPTCR_BASE, val);
+     ILOG("[ 9 ] re-locked option bytes\n");
+
+     ILOG("[ 10 ] re-locked Flash\n");
+     return 0;
+  }
+
+  /**
+   * Write or clears given optionbytes
+   * @param sl
+   * @param addr of the memory mapped optionbytes
+   * @param nreset determines reset or set of optionbytes
+   * @param start_sector starting sector for reset or set
+   * @param end_sector ending sector for reset or set
+   * @return 0 on success, -ve on failure.
+   */
+  int stm32f4_fwrite_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector) {
+    int err;
+    DLOG("entered optionbytes command with erase = %5d\n", nreset);
+    err = stm32f4_write_option_bytes(sl, addr, nreset, start_sector, end_sector);
+   return err;
+ }

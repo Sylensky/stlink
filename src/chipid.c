@@ -106,6 +106,17 @@ static const struct stlink_chipid_params devices[] = {
             .bootrom_size = 0x7800
         },
         {
+            // STM32F401VD MCUs.
+            .chip_id = STLINK_CHIPID_STM32_F401,
+            .description = "F401 device",
+            .flash_type = STLINK_FLASH_TYPE_F4,
+            .flash_size_reg = 0x1fff7a22,       // "Flash size data register" (pg1135)
+            .flash_pagesize = 0x4000,           // "Flash module organization" (variable sector sizes, but 0x4000 is smallest)
+            .sram_size = 0x18000,               // "sram size"
+            .bootrom_base = 0x1fff0000,         // "system memory" starting address
+            .bootrom_size = 0x7800              // "system memory size"
+        },
+        {
             .chip_id = STLINK_CHIPID_STM32_F411RE,
             .description = "F4 device (low power) - stm32f411re",
             .flash_type = STLINK_FLASH_TYPE_F4,

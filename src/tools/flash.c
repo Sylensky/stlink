@@ -34,6 +34,7 @@ static void usage(void)
     puts("stlinkv2 command line: ./st-flash [--debug] [--reset] [--serial <serial>] [--format <format>] [--flash=<fsize>] {read|write} <path> <addr> <size>");
     puts("stlinkv2 command line: ./st-flash [--debug] [--serial <serial>] erase");
     puts("stlinkv2 command line: ./st-flash [--debug] [--serial <serial>] reset");
+    puts("stlinkv2 command line: ./st-flash [--debug] [--serial <serial>] optionbytes <optionbyte baseaddr> {erase/set} <start sector> <end sector>");
     puts("                       Use hex format for addr, <serial> and <size>.");
     puts("                       fsize: Use decimal, octal or hex by prefix 0xXXX for hex, optionally followed by k=KB, or m=MB (eg. --flash=128k)");
     puts("                       Format may be 'binary' (default) or 'ihex', although <addr> must be specified for binary format only.");
@@ -186,7 +187,19 @@ int main(int ac, char** av)
             printf("Failed to reset device\n");
             goto on_error;
         }
-    }
+    }  else if (o.cmd == FLASH_CMD_WRITE_OPTION_BYTES)
+      {
+         if (o.addr == STM32_F401VD_OPTION_BYTES_BASE)
+         {
+           printf("success reading F401 with sectors starting from %5d to %d\n", o.start_sector, o.end_sector);
+           err = stm32f4_fwrite_option_bytes(sl, o.addr, o.subcmd, o.start_sector, o.end_sector);
+           if (err == -1)
+           {
+               printf("stm32f4_fwrite_option_bytes() == -1\n");
+               goto on_error;
+           }
+         } else printf("error reading F401 Address\n");
+      }
     else /* read */
     {
         if ((o.addr >= sl->flash_base) && (o.size == 0) &&

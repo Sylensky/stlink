@@ -35,6 +35,7 @@ enum stlink_stm32_chipids {
 	STLINK_CHIPID_STM32_F411RE           = 0x431,
 	STLINK_CHIPID_STM32_F37x             = 0x432,
 	STLINK_CHIPID_STM32_F4_DE            = 0x433,
+	STLINK_CHIPID_STM32_F401             = 0x433,
 	STLINK_CHIPID_STM32_F4_DSI           = 0x434,
 	/*
 	* 0x435 covers STM32L43xxx and STM32L44xxx devices

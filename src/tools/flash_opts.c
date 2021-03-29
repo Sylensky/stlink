@@ -127,6 +127,10 @@ int flash_get_opts(struct flash_opts* o, int ac, char** av)
             if (o->cmd != FLASH_CMD_NONE) return -1;
             o->cmd = CMD_RESET;
         }
+        else if (strcmp(av[0], "optionbytes") == 0) {
+            if (o->cmd != FLASH_CMD_NONE) return -1;
+            o->cmd = FLASH_CMD_WRITE_OPTION_BYTES;
+        }
         else if(starts_with(av[0], "/dev/")) {
             if (o->devname) return -1;
             o->devname = av[0];
@@ -176,6 +180,23 @@ int flash_get_opts(struct flash_opts* o, int ac, char** av)
             else {
                 return -1;
             }
+            break;
+        case FLASH_CMD_WRITE_OPTION_BYTES:
+            if (ac != 4) return -1;   // expect addr and subcmd, start and end sectors
+            o->addr = (uint32_t) strtoul(av[0], &tail, 16);
+            if(tail[0] != '\0') return -1;
+            printf("read address successfully\n");
+            if(strcmp(av[1], "erase") == 0)
+              o->subcmd = OPTIONBYTE_SUBCMD_ERASE;
+
+            else if(strcmp(av[1], "set") == 0)
+              o->subcmd = OPTIONBYTE_SUBCMD_SET;
+
+            o->start_sector = (uint8_t) strtoul(av[2], &tail, 8);
+            if(tail[0] != '\0') return -1;
+
+            o->end_sector = (uint8_t) strtoul(av[3], &tail, 8);
+            if(tail[0] != '\0') return -1;
             break;
 
        default: break ;
