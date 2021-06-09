@@ -186,6 +186,106 @@ uint8_t stm32f401vd_sectors[8] =
     STM32F401VD_FLASH_OPTCR_nWRP_BIT7
 };
 
+
+
+// STM32F070CB
+#define STM32F070CB_FLASH_REGS_ADDR ((uint32_t)0x40022000)
+#define STM32F070CB_FLASH_ACR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x00)
+#define STM32F070CB_FLASH_KEYR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x04)
+#define STM32F070CB_FLASH_OPTKEYR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x08)
+#define STM32F070CB_FLASH_SR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x0C)
+#define STM32F070CB_FLASH_CR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x10)
+#define STM32F070CB_FLASH_AR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x14)
+#define STM32F070CB_FLASH_OBR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x1C)
+#define STM32F070CB_FLASH_WRPR_BASE (STM32F070CB_FLASH_REGS_ADDR + 0x20)
+
+
+// STM32F070CB FLASH control register
+#define STM32F070CB_FLASH_CR_PG               0        /* Program */
+#define STM32F070CB_FLASH_CR_PER              1        /* Page erase */
+#define STM32F070CB_FLASH_CR_MER              2        /* Mass erase */
+#define STM32F070CB_FLASH_CR_OPTPG            4        /* Option byte programming */
+#define STM32F070CB_FLASH_CR_OPTER            5        /* Option byte erase */
+#define STM32F070CB_FLASH_CR_STRT             6        /* Start */
+#define STM32F070CB_FLASH_CR_LOCK             7        /* Lock */
+#define STM32F070CB_FLASH_CR_OPTWRE           9        /* Option byte write enable */
+#define STM32F070CB_FLASH_CR_ERRIE           10        /* Error interrupt enable */
+#define STM32F070CB_FLASH_CR_EOPIE           12        /* End of operation interrupt enable */
+#define STM32F070CB_FLASH_CR_OBL_LAUNCH      13        /* Force option byte loading */
+
+// STM32F070CB FLASH write protection register
+#define STM32F070CB_FLASH_WRP_BIT0            0        /* write protect bit 0*/
+#define STM32F070CB_FLASH_WRP_BIT1            1
+#define STM32F070CB_FLASH_WRP_BIT2            2
+#define STM32F070CB_FLASH_WRP_BIT3            3
+#define STM32F070CB_FLASH_WRP_BIT4            4
+#define STM32F070CB_FLASH_WRP_BIT5            5
+#define STM32F070CB_FLASH_WRP_BIT6            6
+#define STM32F070CB_FLASH_WRP_BIT7            7
+#define STM32F070CB_FLASH_WRP_BIT8            0
+#define STM32F070CB_FLASH_WRP_BIT9            9
+#define STM32F070CB_FLASH_WRP_BIT10          10 
+#define STM32F070CB_FLASH_WRP_BIT11          11
+#define STM32F070CB_FLASH_WRP_BIT12          12
+#define STM32F070CB_FLASH_WRP_BIT13          13
+#define STM32F070CB_FLASH_WRP_BIT14          14
+#define STM32F070CB_FLASH_WRP_BIT15          15
+#define STM32F070CB_FLASH_WRP_BIT16          16
+#define STM32F070CB_FLASH_WRP_BIT17          17
+#define STM32F070CB_FLASH_WRP_BIT18          18
+#define STM32F070CB_FLASH_WRP_BIT19          19
+#define STM32F070CB_FLASH_WRP_BIT20          20
+#define STM32F070CB_FLASH_WRP_BIT21          21
+#define STM32F070CB_FLASH_WRP_BIT22          22
+#define STM32F070CB_FLASH_WRP_BIT23          23
+#define STM32F070CB_FLASH_WRP_BIT24          24
+#define STM32F070CB_FLASH_WRP_BIT25          25
+#define STM32F070CB_FLASH_WRP_BIT26          26
+#define STM32F070CB_FLASH_WRP_BIT27          27
+#define STM32F070CB_FLASH_WRP_BIT28          28
+#define STM32F070CB_FLASH_WRP_BIT29          29
+#define STM32F070CB_FLASH_WRP_BIT30          30
+#define STM32F070CB_FLASH_WRP_BIT31          31
+#define STM32F070CB_FLASH_SR_BSY_BIT          0        /* Status busy */
+#define STM32F070CB_FLASH_OBR_OPTERR_BIT      0        /* Option byte error */
+
+
+uint8_t stm32f070cb_pages[32] =
+{
+    STM32F070CB_FLASH_WRP_BIT0,
+    STM32F070CB_FLASH_WRP_BIT1,
+    STM32F070CB_FLASH_WRP_BIT2,
+    STM32F070CB_FLASH_WRP_BIT3,
+    STM32F070CB_FLASH_WRP_BIT4,
+    STM32F070CB_FLASH_WRP_BIT5,
+    STM32F070CB_FLASH_WRP_BIT6,
+    STM32F070CB_FLASH_WRP_BIT7,
+    STM32F070CB_FLASH_WRP_BIT8,
+    STM32F070CB_FLASH_WRP_BIT9,
+    STM32F070CB_FLASH_WRP_BIT10,
+    STM32F070CB_FLASH_WRP_BIT11,
+    STM32F070CB_FLASH_WRP_BIT12,
+    STM32F070CB_FLASH_WRP_BIT13,
+    STM32F070CB_FLASH_WRP_BIT14,
+    STM32F070CB_FLASH_WRP_BIT15,
+    STM32F070CB_FLASH_WRP_BIT16,
+    STM32F070CB_FLASH_WRP_BIT17,
+    STM32F070CB_FLASH_WRP_BIT18,
+    STM32F070CB_FLASH_WRP_BIT19,
+    STM32F070CB_FLASH_WRP_BIT20,
+    STM32F070CB_FLASH_WRP_BIT21,
+    STM32F070CB_FLASH_WRP_BIT22,
+    STM32F070CB_FLASH_WRP_BIT23,
+    STM32F070CB_FLASH_WRP_BIT24,
+    STM32F070CB_FLASH_WRP_BIT25,
+    STM32F070CB_FLASH_WRP_BIT26,
+    STM32F070CB_FLASH_WRP_BIT27,
+    STM32F070CB_FLASH_WRP_BIT28,
+    STM32F070CB_FLASH_WRP_BIT29,
+    STM32F070CB_FLASH_WRP_BIT30,
+    STM32F070CB_FLASH_WRP_BIT31
+};
+
 void write_uint32(unsigned char* buf, uint32_t ui) {
     if (!is_bigendian()) { // le -> le (don't swap)
         buf[0] = ((unsigned char*) &ui)[0];
@@ -2527,5 +2627,313 @@ int stm32f4_write_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, 
     int err;
     DLOG("entered optionbytes command with erase = %5d\n", nreset);
     err = stm32f4_write_option_bytes(sl, addr, nreset, start_sector, end_sector);
+   return err;
+ }
+
+
+ int stm32f070_option_bytes_set(stlink_t *sl, stm32_addr_t addr, uint8_t start_sector, uint8_t end_sector)
+{
+  uint32_t val = 0;
+  uint8_t sector_count = 0;
+  
+//   stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+//   val |= (1 << STM32F070CB_FLASH_CR_OPTER);
+//   val |= (1 << STM32F070CB_FLASH_CR_STRT);
+//   stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+//   ILOG("[ 4/2 ] Wrote OPTER & STRT %#x to Flash_CR = %#x\n", ((1 << STM32F070CB_FLASH_CR_OPTER) | (1 << STM32F070CB_FLASH_CR_STRT)), STM32F070CB_FLASH_CR_BASE);
+
+
+//       //Wait for 'busy' bit in FLASH_SR to clear.
+//   do {
+//     stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+//   } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+//   stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+
+//   val &= ~(1 << STM32F070CB_FLASH_CR_OPTER);
+//   stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+
+      //Wait for 'busy' bit in FLASH_SR to clear.
+  do {
+    stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+  } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+//   ILOG("[ 4/2 ] Cleared OPTER bit in Flash_CR\n");
+
+  
+  stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+
+  val |= (1 << STM32F070CB_FLASH_CR_OPTPG);
+  stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+  ILOG("[ 4/3 ] Wrote OPTPG %#x to Flash_CR = %#x\n", (1 << STM32F070CB_FLASH_CR_OPTPG), STM32F070CB_FLASH_CR_BASE);
+
+//         //Wait for 'busy' bit in FLASH_SR to clear.
+//   do {
+//     stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+//   } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+  stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+  DLOG("val = %#x   bit = %#x\n", (val), (1 << STM32F070CB_FLASH_CR_OPTPG));
+  if ((val & (1 << STM32F070CB_FLASH_CR_OPTPG))) {
+      DLOG("Programming bit set!\n");
+  }
+  stlink_read_debug32(sl, addr, &val);
+
+  //writing 1 to option bits to lock
+  for (sector_count = start_sector; sector_count < end_sector + 1; ++sector_count)
+  {
+    val &= ~(1 << (uint32_t)stm32f070cb_pages[sector_count]);
+    //val |= (1 << ((uint32_t)stm32f070cb_pages[sector_count] + 8));
+    DLOG("val = %#x// count = %5d\n", val, sector_count);
+  }
+  stlink_write_debug32(sl, addr, val);
+  ILOG("[ 5/1 ] Wrote %#x to Flash_OBR_WRP Optionbyte %x at %#x\n", val, sector_count, addr);
+  
+  //stlink_read_debug32(sl, addr, &val);
+  ILOG("[ 6/1 ] set Write protection of sector %d to %d\n", start_sector, end_sector);
+
+    //Wait for 'busy' bit in FLASH_SR to clear.
+  do {
+    stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+  } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+    stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+
+  stlink_read_debug32(sl, addr, &val);
+  DLOG("val = %#x   addr = %#x\n", val, addr);
+
+
+  stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+  val &= ~(1 << STM32F070CB_FLASH_CR_OPTPG);
+  stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+  ILOG("[ 6/2 ] Wrote OPTPG %#x to Flash_CR = %#x\n", val, STM32F070CB_FLASH_CR_BASE);
+  stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+  DLOG("val = %#x   bit = %#x\n", val, 1 << STM32F070CB_FLASH_CR_OPTPG);
+  if (!(val & (1 << STM32F070CB_FLASH_CR_OPTPG))) {
+      DLOG("Programming bit cleared!\n");
+  }
+
+     stlink_read_debug32(sl, STM32F070CB_FLASH_WRPR_BASE, &val);
+     
+     stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+
+  stlink_read_debug32(sl, addr, &val);
+  
+  return 0;
+}
+
+int stm32f070_option_bytes_clear(stlink_t *sl, stm32_addr_t addr, uint8_t start_sector, uint8_t end_sector)
+{
+  uint32_t val = 0;
+  uint8_t sector_count = 0;
+
+  stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, 1 << STM32F070CB_FLASH_CR_OPTPG);
+  ILOG("[ 4/1 ] Wrote %#x to Flash_CR = %#x\n", 1 << STM32F070CB_FLASH_CR_OPTPG, STM32F070CB_FLASH_CR_BASE);
+
+    //Wait for 'busy' bit in FLASH_SR to clear.
+  do {
+    stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+  } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+  stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+  DLOG("val = %#x   bit = %#x\n", val, 1 << STM32F070CB_FLASH_CR_OPTPG);
+  if ((val & (1 << STM32F070CB_FLASH_CR_OPTPG))) {
+      DLOG("Programming bit set!\n");
+  }
+
+  stlink_read_debug32(sl, addr, &val);
+
+  //writing 0 to option bits to unlock
+  for (sector_count = start_sector; sector_count < end_sector + 1; ++sector_count)
+  {
+    val |= (1 << (uint32_t)stm32f070cb_pages[sector_count]);
+    val &= ~(1 << ((uint32_t)stm32f070cb_pages[sector_count] + 8));
+    DLOG("val = %#x// count = %5d\n", val, sector_count);
+  }
+  stlink_write_debug32(sl, addr, val);
+  ILOG("[ 5/1 ] Wrote %#x to Flash_OBR_WRP Optionbyte %x at %#x\n", val, sector_count, addr);
+
+  //stlink_read_debug32(sl, addr, &val);
+  ILOG("[ 6/1 ] removed Write protection of sector %d to %d\n", start_sector, end_sector);
+
+    //Wait for 'busy' bit in FLASH_SR to clear.
+  do {
+    stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+  } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+  stlink_read_debug32(sl, STM32F070CB_FLASH_OBR_BASE, &val);
+  DLOG("val = %#x   bit = %#x\n", val, 1 << STM32F070CB_FLASH_OBR_OPTERR_BIT);
+  if ((val & (1 << STM32F070CB_FLASH_OBR_OPTERR_BIT))) {
+      DLOG("Option byte error!\n");
+  }
+
+  DLOG("reading WRP value\n");
+  stlink_read_debug32(sl, addr, &val);
+
+  return 0;
+}
+
+/**
+ * Write option bytes
+ * @param sl
+ * @param addr of the memory mapped option bytes
+ * @param base option bytes to write
+ * @return 0 on success, -ve on failure.
+ */
+int stm32f070_write_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector)
+{
+    uint32_t val;
+
+    // Make sure we've loaded the context with the chip details
+    stlink_core_id(sl);
+
+    /* Check if chip is supported and for correct address */
+    if((sl->chip_id != STLINK_CHIPID_STM32_F0_CAN) || (addr != STM32_F070CB_OPTION_BYTES_BASE)) {
+        ELOG("Option bytes writing is currently only supported for the STM32F070CB\n");
+        return -1;
+    }
+    ILOG("[ 1 ] Checked the supported Chip\n");
+
+    /* Unlock flash if necessary */
+    stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+    DLOG("val = %#x   LOCK = %#x\n", val, 1 << STM32F070CB_FLASH_CR_LOCK);
+    if ((val & (1 << STM32F070CB_FLASH_CR_LOCK))) {
+
+        do {
+            stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+        } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+        ILOG("[ 2 ] Disabling Flash write protection\n");
+
+        val = 0x45670123;
+        stlink_write_debug32(sl, STM32F070CB_FLASH_KEYR_BASE, val);
+        ILOG("[ 2/1 ] Wrote %x to Flash_KEYR = %#x\n", val, STM32F070CB_FLASH_KEYR_BASE);
+
+        val = 0xCDEF89AB;
+        stlink_write_debug32(sl, STM32F070CB_FLASH_KEYR_BASE, val);
+        ILOG("[ 2/1 ] Wrote %x to Flash_KEYR = %#x\n", val, STM32F070CB_FLASH_KEYR_BASE);
+
+        //Wait for 'busy' bit in FLASH_SR to clear.
+        do {
+            stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+        } while((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+        // check that the lock is no longer set.
+        stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+        if ((val & (1 << STM32F070CB_FLASH_CR_LOCK))) {
+            ELOG("Flash Lock is still set\n");
+            return -1;
+        }
+        ILOG("[ 3 ] Flash write protection disabled\n");
+    }
+
+    //Wait for 'busy' bit in FLASH_SR to clear.
+    do {
+        stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+    } while((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+    /* Unlock option bytes if necessary */
+    stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+    DLOG("val = %#x   LOCK = %#x\n", val, 1 << STM32F070CB_FLASH_CR_OPTWRE);
+    if (!(val & (1 << STM32F070CB_FLASH_CR_OPTWRE))) {
+        /* disable option byte write protection. */
+
+        DLOG("Optionsbytes write protected!\n");
+        //Wait for 'busy' bit in FLASH_SR to clear.
+        do {
+              stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+        } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+        val = 0x45670123;
+        stlink_write_debug32(sl, STM32F070CB_FLASH_OPTKEYR_BASE, val);
+        ILOG("[ 3/1 ] Wrote %x to Flash_OPTKEYR = %#x\n", val, STM32F070CB_FLASH_OPTKEYR_BASE);
+
+        val = 0xCDEF89AB;
+        stlink_write_debug32(sl, STM32F070CB_FLASH_OPTKEYR_BASE, val);
+        ILOG("[ 3/1 ] Wrote %x to Flash_OPTKEYR = %#x\n", val, STM32F070CB_FLASH_OPTKEYR_BASE);
+
+
+        stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+        if (!(val & (1 << STM32F070CB_FLASH_CR_OPTWRE))) {
+           ELOG("Optionbyte write is still not enabled\n");
+            return -1;
+        }
+        ILOG("[ 4 ] option bytes ready to be used\n");
+    }
+
+    stlink_read_debug32(sl, addr, &val);
+    DLOG("val = %#x   adr = %#x\n", val, addr);
+
+    if(nreset == 0)
+    {
+      /* Clearing option bytes */
+      stm32f070_option_bytes_clear(sl, addr, start_sector, end_sector);
+    } else if(nreset == 1)
+    {
+      stm32f070_option_bytes_set(sl, addr, start_sector, end_sector);
+    }
+
+    stlink_read_debug32(sl, STM32F070CB_FLASH_OBR_BASE, &val);
+    DLOG("val = %#x   bit = %#x\n", val, 1 << STM32F070CB_FLASH_OBR_OPTERR_BIT);
+    if ((val & (1 << STM32F070CB_FLASH_OBR_OPTERR_BIT))) {
+        DLOG("Option byte error!\n");
+    }
+
+    stlink_read_debug32(sl, STM32F070CB_FLASH_WRPR_BASE, &val);
+
+
+    stlink_read_debug32(sl, addr, &val);
+    DLOG("val = %#x   adr = %#x\n", val, addr);
+
+
+    /* Launch option byte reloading */
+    //  stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+    //  val |= (1 << STM32F070CB_FLASH_CR_OBL_LAUNCH);
+    //  stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+    //  ILOG("[ 7 ] Launched option byte reloading\n");
+
+
+    stlink_read_debug32(sl, addr, &val);
+    DLOG("val = %#x   adr = %#x\n", val, addr);
+
+       //Wait for 'busy' bit in FLASH_SR to clear.
+     do {
+         stlink_read_debug32(sl, STM32F070CB_FLASH_SR_BASE, &val);
+     } while ((val & (1 << STM32F070CB_FLASH_SR_BSY_BIT)) != 0);
+
+      //disable option byte writ
+     stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+     val |= (0 << STM32F070CB_FLASH_CR_OPTPG);
+     val |= (0 << STM32F070CB_FLASH_CR_OPTWRE);
+     stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+     ILOG("[ 8 ] Applied option bytes\n");
+
+
+
+
+
+     /* Re-lock flash */
+
+     stlink_read_debug32(sl, STM32F070CB_FLASH_CR_BASE, &val);
+     val |= (1 << STM32F070CB_FLASH_CR_LOCK);
+     stlink_write_debug32(sl, STM32F070CB_FLASH_CR_BASE, val);
+     ILOG("[ 9 ] re-locked option bytes\n");
+
+     ILOG("[ 10 ] re-locked Flash\n");
+     return 0;
+  }
+
+  /**
+   * Write or clears given optionbytes
+   * @param sl
+   * @param addr of the memory mapped optionbytes
+   * @param nreset determines reset or set of optionbytes
+   * @param start_sector starting sector for reset or set
+   * @param end_sector ending sector for reset or set
+   * @return 0 on success, -ve on failure.
+   */
+  int stm32f070_fwrite_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector) {
+    int err;
+    DLOG("entered optionbytes command with erase = %5d\n", nreset);
+    err = stm32f070_write_option_bytes(sl, addr, nreset, start_sector, end_sector);
    return err;
  }

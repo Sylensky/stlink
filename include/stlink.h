@@ -44,6 +44,7 @@ extern "C" {
     // TODO - possible poor names...
 #define STLINK_SWD_ENTER 0x30
 #define STLINK_SWD_READCOREID 0x32  // TBD
+#define STLINK_JTAG_WRITEDEBUG_16BIT 0x33
 #define STLINK_JTAG_WRITEDEBUG_32BIT 0x35
 #define STLINK_JTAG_READDEBUG_32BIT 0x36
 #define STLINK_JTAG_DRIVE_NRST 0x3c
@@ -59,6 +60,7 @@ extern "C" {
 #define STM32_FLASH_BASE 0x08000000
 #define STM32_SRAM_BASE 0x20000000
 #define STM32_F401VD_OPTION_BYTES_BASE ((uint32_t)0x1FFFC008)
+#define STM32_F070CB_OPTION_BYTES_BASE ((uint32_t)0x1FFFF808)
 
 
 // Baud rate divisors for SWDCLK
@@ -203,6 +205,9 @@ typedef struct flash_loader {
     //int stlink_fwrite_option_bytes(stlink_t *sl, const char* path, stm32_addr_t addr);
     int stm32f4_fwrite_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector);
     int stm32f4_write_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector);
+    
+    int stm32f070_fwrite_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector);
+    int stm32f070_write_option_bytes(stlink_t *sl, stm32_addr_t addr, uint8_t nreset, uint8_t start_sector, uint8_t end_sector);
 
     int stlink_erase_flash_mass(stlink_t* sl);
     int stlink_write_flash(stlink_t* sl, stm32_addr_t address, uint8_t* data, uint32_t length, uint8_t eraseonly);

@@ -189,16 +189,30 @@ int main(int ac, char** av)
         }
     }  else if (o.cmd == FLASH_CMD_WRITE_OPTION_BYTES)
       {
-         if (o.addr == STM32_F401VD_OPTION_BYTES_BASE)
+         switch (o.addr)
          {
-           printf("success reading F401 with sectors starting from %5d to %d\n", o.start_sector, o.end_sector);
-           err = stm32f4_fwrite_option_bytes(sl, o.addr, o.subcmd, o.start_sector, o.end_sector);
-           if (err == -1)
-           {
+         case STM32_F401VD_OPTION_BYTES_BASE:
+            printf("success reading F401 with sectors starting from %5d to %d\n", o.start_sector, o.end_sector);
+            err = stm32f4_fwrite_option_bytes(sl, o.addr, o.subcmd, o.start_sector, o.end_sector);
+            if (err == -1)
+            {
                printf("stm32f4_fwrite_option_bytes() == -1\n");
                goto on_error;
-           }
-         } else printf("error reading F401 Address\n");
+            }
+             break;
+         case STM32_F070CB_OPTION_BYTES_BASE:
+            printf("success reading F070 with pages starting from %5d to %d\n", o.start_sector, o.end_sector);
+            err = stm32f070_fwrite_option_bytes(sl, o.addr, o.subcmd, o.start_sector, o.end_sector);
+            if(err == -1)
+            {
+                printf("stm32f070_fwrite_option_bytes() == -1\n");
+                goto on_error;
+            }
+             break;
+         default:
+            printf("Reading/writing Optionbytes not supported for Chip with 0x%x\n", o.addr);
+             break;
+         }
       }
     else /* read */
     {
