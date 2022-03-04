@@ -152,6 +152,8 @@ static const struct stlink_chipid_params devices[] = {
         .bootrom_base = 0x1fff0000,
         .bootrom_size = 0x7800,
         .flags = CHIP_F_HAS_SWO_TRACING,
+        .option_base = STM32_F4_OPTION_BYTES_BASE,
+        .option_size = 16,
     },
     {
         .chip_id = STLINK_CHIPID_STM32_F1_HIGH,
